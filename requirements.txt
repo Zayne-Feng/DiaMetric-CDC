@@ -1,0 +1,22 @@
+# Data Analysis & Numerical Computing
+pandas>=2.2.0
+numpy>=1.22.0,<2.4.0
+
+# Data Visualization
+matplotlib>=3.9.0
+seaborn>=0.13.2
+
+# Statistical Modeling & Hypothesis Testing
+scipy>=1.13.0
+statsmodels>=0.14.0
+
+# Machine Learning & Predictive Modeling
+scikit-learn>=1.5.0
+imbalanced-learn>=0.12.3
+
+# Model Interpretability
+shap>=0.45.0
+
+# Interactive Computing Infrastructure
+ipykernel>=6.29.0
+nbformat>=5.10.0
