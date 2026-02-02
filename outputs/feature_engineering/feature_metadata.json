@@ -1,0 +1,123 @@
+{
+  "final_features": [
+    "HighBP",
+    "HighChol",
+    "Stroke",
+    "HeartDiseaseorAttack",
+    "PhysActivity",
+    "Fruits",
+    "Veggies",
+    "HvyAlcoholConsump",
+    "NoDocbcCost",
+    "GenHlth",
+    "MentHlth",
+    "PhysHlth",
+    "DiffWalk",
+    "Sex",
+    "Education",
+    "Income",
+    "Age_BMI_Interaction",
+    "CVD_Risk",
+    "MetSyn_Risk",
+    "Chronic_Count",
+    "Lifestyle_Score",
+    "Risk_Behavior",
+    "BMI_Squared",
+    "Health_Imbalance"
+  ],
+  "feature_count": 24,
+  "removed_features": {
+    "low_utility": [
+      "AnyHealthcare",
+      "CholCheck"
+    ],
+    "near_zero_var": [
+      "Is_Extreme_BMI"
+    ],
+    "high_vif": [],
+    "high_corr": [
+      "Age_Group",
+      "SDOH_Index",
+      "Age",
+      "Smoker",
+      "BMI_WHO",
+      "PhysHlth_Cat",
+      "BMI",
+      "MentHlth_Cat"
+    ]
+  },
+  "continuous_features": [
+    "MentHlth",
+    "PhysHlth",
+    "Age_BMI_Interaction",
+    "BMI_Squared"
+  ],
+  "scaling_method": "RobustScaler",
+  "train_test_split": {
+    "test_size": 0.2,
+    "random_state": 42,
+    "stratified": true
+  },
+  "binning_definitions": {
+    "BMI_WHO": {
+      "description": "WHO BMI classification",
+      "bins": {
+        "1": "Underweight (BMI < 18.5)",
+        "2": "Normal (18.5 <= BMI < 25)",
+        "3": "Overweight (25 <= BMI < 30)",
+        "4": "Obese (BMI >= 30)"
+      }
+    },
+    "Age_Group": {
+      "description": "Life stage categories derived from Age (1-13)",
+      "bins": {
+        "1": "18-29 (Young Adult)",
+        "2": "30-44 (Early Middle Age)",
+        "3": "45-59 (Late Middle Age)",
+        "4": "60-74 (Young-Old)",
+        "5": "75+ (Old-Old)"
+      }
+    },
+    "MentHlth_Cat": {
+      "description": "Mental health burden (days in past 30)",
+      "bins": {
+        "0": "None (0 days)",
+        "1": "Moderate (1-13 days)",
+        "2": "Severe (14-30 days)"
+      }
+    },
+    "PhysHlth_Cat": {
+      "description": "Physical health burden (days in past 30)",
+      "bins": {
+        "0": "None (0 days)",
+        "1": "Moderate (1-13 days)",
+        "2": "Severe (14-30 days)"
+      }
+    },
+    "Is_Extreme_BMI": {
+      "description": "Extreme obesity indicator",
+      "bins": {
+        "0": "BMI <= 50",
+        "1": "BMI > 50 (extreme)"
+      }
+    }
+  },
+  "composite_definitions": {
+    "Age_BMI_Interaction": "Age \u00d7 BMI product term for non-linear synergy",
+    "CVD_Risk": "HighBP \u00d7 HighChol (cardiovascular co-morbidity indicator)",
+    "MetSyn_Risk": "HighBP + HighChol + (BMI_WHO >= 4), range [0-3]",
+    "Chronic_Count": "Sum of HighBP, HighChol, HeartDiseaseorAttack, Stroke",
+    "SDOH_Index": "(Education + Income) / 2, social determinants composite",
+    "Lifestyle_Score": "PhysActivity + Fruits + Veggies, range [0-3]",
+    "Risk_Behavior": "Smoker + HvyAlcoholConsump, range [0-2]",
+    "BMI_Squared": "BMI\u00b2 for non-linear effects",
+    "Health_Imbalance": "MentHlth_Cat - PhysHlth_Cat, range [-2, 2]"
+  },
+  "thresholds": {
+    "BMI_EXTREME": 50.0,
+    "BMI_WINSORIZE_PCT": 99,
+    "VARIANCE": 0.01,
+    "VIF": 10.0,
+    "CORRELATION": 0.85
+  }
+}
