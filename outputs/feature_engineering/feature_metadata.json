@@ -10,12 +10,12 @@
     "HvyAlcoholConsump",
     "NoDocbcCost",
     "GenHlth",
-    "MentHlth",
-    "PhysHlth",
     "DiffWalk",
     "Sex",
     "Education",
     "Income",
+    "MentHlth_Cat",
+    "PhysHlth_Cat",
     "Age_BMI_Interaction",
     "CVD_Risk",
     "MetSyn_Risk",
@@ -23,32 +23,33 @@
     "Lifestyle_Score",
     "Risk_Behavior",
     "BMI_Squared",
-    "Health_Imbalance"
+    "Health_Imbalance",
+    "Original_Index"
   ],
-  "feature_count": 24,
+  "feature_count": 25,
   "removed_features": {
     "low_utility": [
       "AnyHealthcare",
-      "CholCheck"
+      "CholCheck",
+      "MentHlth",
+      "PhysHlth",
+      "BMI"
     ],
     "near_zero_var": [
       "Is_Extreme_BMI"
     ],
     "high_vif": [],
     "high_corr": [
+      "Smoker",
       "Age_Group",
       "SDOH_Index",
       "Age",
-      "Smoker",
-      "BMI_WHO",
-      "PhysHlth_Cat",
-      "BMI",
-      "MentHlth_Cat"
+      "BMI_WHO"
     ]
   },
   "continuous_features": [
-    "MentHlth",
-    "PhysHlth",
+    "Education",
+    "Income",
     "Age_BMI_Interaction",
     "BMI_Squared"
   ],
@@ -82,16 +83,16 @@
       "description": "Mental health burden (days in past 30)",
       "bins": {
         "0": "None (0 days)",
-        "1": "Moderate (1-13 days)",
-        "2": "Severe (14-30 days)"
+        "1": "Moderate (1-14 days)",
+        "2": "Severe (15-30 days)"
       }
     },
     "PhysHlth_Cat": {
       "description": "Physical health burden (days in past 30)",
       "bins": {
         "0": "None (0 days)",
-        "1": "Moderate (1-13 days)",
-        "2": "Severe (14-30 days)"
+        "1": "Moderate (1-14 days)",
+        "2": "Severe (15-30 days)"
       }
     },
     "Is_Extreme_BMI": {
