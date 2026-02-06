@@ -1,0 +1,254 @@
+{
+  "0": {
+    "cluster_id": 0,
+    "size": 49209,
+    "weighted_size": 45629.418725124764,
+    "prevalence": 0.17855513006210444,
+    "categorical_stats": {
+      "HvyAlcoholConsump": {
+        "mean_val": 0.003948491041488919,
+        "z_deviation": -0.23760863997811366
+      },
+      "HeartDiseaseorAttack": {
+        "mean_val": 0.0,
+        "z_deviation": -0.339344641550149
+      }
+    },
+    "continuous_stats": {
+      "GenHlth": {
+        "mean": 3.458481319073792,
+        "std": 0.6576066605303257,
+        "z_deviation": 0.8033168387870868,
+        "weighted": true
+      },
+      "Age_BMI_Interaction": {
+        "mean": 205.25794162582596,
+        "std": 80.02339148376844,
+        "z_deviation": -0.2549236597664016,
+        "weighted": true
+      },
+      "MetSyn_Risk": {
+        "mean": 1.017301930593861,
+        "std": 0.8497389278427945,
+        "z_deviation": -0.19387841538628117,
+        "weighted": true
+      },
+      "BMI_Squared": {
+        "mean": 712.3142324252466,
+        "std": 208.9825451341311,
+        "z_deviation": -0.3596805797817377,
+        "weighted": true
+      }
+    }
+  },
+  "1": {
+    "cluster_id": 1,
+    "size": 15113,
+    "weighted_size": 13703.5830437804,
+    "prevalence": 0.40909090909090917,
+    "categorical_stats": {
+      "HvyAlcoholConsump": {
+        "mean_val": 0.023189746300211422,
+        "z_deviation": -0.15701005279070515
+      },
+      "HeartDiseaseorAttack": {
+        "mean_val": 0.06302854122621566,
+        "z_deviation": -0.13222098052045264
+      }
+    },
+    "continuous_stats": {
+      "GenHlth": {
+        "mean": 3.526096723044398,
+        "std": 0.8758751209111504,
+        "z_deviation": 0.8668917617035394,
+        "weighted": true
+      },
+      "Age_BMI_Interaction": {
+        "mean": 332.5772330866808,
+        "std": 106.29986695548749,
+        "z_deviation": 1.049212072180754,
+        "weighted": true
+      },
+      "MetSyn_Risk": {
+        "mean": 2.2542283298097257,
+        "std": 0.74945934471971,
+        "z_deviation": 1.0664312138098127,
+        "weighted": true
+      },
+      "BMI_Squared": {
+        "mean": 1781.318115750529,
+        "std": 417.06079533800806,
+        "z_deviation": 2.3407126302741283,
+        "weighted": true
+      }
+    }
+  },
+  "2": {
+    "cluster_id": 2,
+    "size": 10180,
+    "weighted_size": 9438.415250489608,
+    "prevalence": 0.05803357314148681,
+    "categorical_stats": {
+      "HvyAlcoholConsump": {
+        "mean_val": 1.0,
+        "z_deviation": 3.9346942222038876
+      },
+      "HeartDiseaseorAttack": {
+        "mean_val": 0.022733812949640286,
+        "z_deviation": -0.2646370491533364
+      }
+    },
+    "continuous_stats": {
+      "GenHlth": {
+        "mean": 2.2121822541966423,
+        "std": 0.8699983656489529,
+        "z_deviation": -0.36850736586983823,
+        "weighted": true
+      },
+      "Age_BMI_Interaction": {
+        "mean": 197.17410071942444,
+        "std": 83.28279235165651,
+        "z_deviation": -0.3377267107137566,
+        "weighted": true
+      },
+      "MetSyn_Risk": {
+        "mean": 0.9444604316546763,
+        "std": 0.9032232497240203,
+        "z_deviation": -0.26809693200645274,
+        "weighted": true
+      },
+      "BMI_Squared": {
+        "mean": 717.5882973621102,
+        "std": 250.7319079925613,
+        "z_deviation": -0.34635785068126107,
+        "weighted": true
+      }
+    }
+  },
+  "3": {
+    "cluster_id": 3,
+    "size": 16992,
+    "weighted_size": 15507.067281571799,
+    "prevalence": 0.35579168612797757,
+    "categorical_stats": {
+      "HvyAlcoholConsump": {
+        "mean_val": 0.023236805231200374,
+        "z_deviation": -0.15681293034202604
+      },
+      "HeartDiseaseorAttack": {
+        "mean_val": 1.0,
+        "z_deviation": 2.9468437581830615
+      }
+    },
+    "continuous_stats": {
+      "GenHlth": {
+        "mean": 3.4525338626809896,
+        "std": 0.9928342639450054,
+        "z_deviation": 0.7977247834340527,
+        "weighted": true
+      },
+      "Age_BMI_Interaction": {
+        "mean": 290.7212751050911,
+        "std": 72.3739483726349,
+        "z_deviation": 0.620480104131335,
+        "weighted": true
+      },
+      "MetSyn_Risk": {
+        "mean": 1.7946637085474075,
+        "std": 0.8747066053438222,
+        "z_deviation": 0.5981788442412362,
+        "weighted": true
+      },
+      "BMI_Squared": {
+        "mean": 842.4781644091546,
+        "std": 294.8129856546282,
+        "z_deviation": -0.030875601983014055,
+        "weighted": true
+      }
+    }
+  },
+  "4": {
+    "cluster_id": 4,
+    "size": 57814,
+    "weighted_size": 66529.73681218017,
+    "prevalence": 0.03355832562190409,
+    "categorical_stats": {
+      "HvyAlcoholConsump": {
+        "mean_val": 0.0,
+        "z_deviation": -0.25414824694174354
+      },
+      "HeartDiseaseorAttack": {
+        "mean_val": 0.00783844102117468,
+        "z_deviation": -0.3135860475943718
+      }
+    },
+    "continuous_stats": {
+      "GenHlth": {
+        "mean": 1.5764792335746556,
+        "std": 0.4941163090121933,
+        "z_deviation": -0.9662227999352515,
+        "weighted": true
+      },
+      "Age_BMI_Interaction": {
+        "mean": 174.6079418648958,
+        "std": 75.32545708000215,
+        "z_deviation": -0.5688726255025988,
+        "weighted": true
+      },
+      "MetSyn_Risk": {
+        "mean": 0.5032115834739533,
+        "std": 0.6537290192769234,
+        "z_deviation": -0.717687281591028,
+        "weighted": true
+      },
+      "BMI_Squared": {
+        "mean": 639.3244107560829,
+        "std": 173.006489882621,
+        "z_deviation": -0.5440589734555641,
+        "weighted": true
+      }
+    }
+  },
+  "5": {
+    "cluster_id": 5,
+    "size": 34128,
+    "weighted_size": 32799.511529471216,
+    "prevalence": 0.2090372087887822,
+    "categorical_stats": {
+      "HvyAlcoholConsump": {
+        "mean_val": 8.280887711162638e-05,
+        "z_deviation": -0.2538013736004761
+      },
+      "HeartDiseaseorAttack": {
+        "mean_val": 0.00342276692061389,
+        "z_deviation": -0.32809678460063707
+      }
+    },
+    "continuous_stats": {
+      "GenHlth": {
+        "mean": 2.305123109197307,
+        "std": 0.5905658782061551,
+        "z_deviation": -0.2811203601658552,
+        "weighted": true
+      },
+      "Age_BMI_Interaction": {
+        "mean": 294.36673291376843,
+        "std": 67.82464440702736,
+        "z_deviation": 0.6578206495667737,
+        "weighted": true
+      },
+      "MetSyn_Risk": {
+        "mean": 1.8844540134702443,
+        "std": 0.7598734462469445,
+        "z_deviation": 0.6896665721888678,
+        "weighted": true
+      },
+      "BMI_Squared": {
+        "mean": 1042.44926576129,
+        "std": 232.6123888696116,
+        "z_deviation": 0.47426812361221427,
+        "weighted": true
+      }
+    }
+  }
+}

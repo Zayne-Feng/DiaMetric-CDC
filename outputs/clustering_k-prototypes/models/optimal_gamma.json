@@ -1,0 +1,12 @@
+{
+  "optimal_gamma": 4.274009558324527,
+  "continuous_std": 0.8548019116649053,
+  "gamma_ratio": 5.0,
+  "categorical_contribution_pct": 67.87787179745925,
+  "selection_method": "CGI_Composite_Ranking",
+  "clinical_weight": 0.6,
+  "geometric_weight": 0.4,
+  "optimal_k": 6,
+  "final_prev_var": 0.017615136390365875,
+  "final_silhouette": 0.31320491433143616
+}
