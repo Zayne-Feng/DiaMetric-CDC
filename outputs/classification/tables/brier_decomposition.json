@@ -1,0 +1,15 @@
+{
+  "method": "Isotonic Regression",
+  "brier_score": 0.10763888977756662,
+  "reliability": 7.46336847587918e-05,
+  "resolution": 0.024632787548226755,
+  "uncertainty": 0.13326208341442394,
+  "calibration_quality": "EXCELLENT calibration",
+  "separation_quality": "Moderate class separation",
+  "interpretation": {
+    "miscalibration_contribution_pct": 0.06933710010668137,
+    "resolution_contribution_pct": 22.88465404941454,
+    "reducible_error": 7.46336847587918e-05,
+    "irreducible_error": 0.13326208341442394
+  }
+}

@@ -1,19 +1,31 @@
+--index-url https://download.pytorch.org/whl/cu121
+--extra-index-url https://pypi.org/simple
+
 # Core Data Analysis
-pandas>=2.2.0
+pandas>=3.0.0
 numpy>=1.22.0,<2.4.0
 
 # Visualization
-matplotlib>=3.9.0
+matplotlib>=3.10.0
 seaborn>=0.13.2
 
 # Statistics
 scipy>=1.13.0
 statsmodels>=0.14.0
 
-# Machine Learning
+# Machine Learning & Acceleration
 scikit-learn>=1.5.0
-scikit-learn-intelex>=2024.0.0  # Intel acceleration
+scikit-learn-intelex>=2025.0.0
 imbalanced-learn>=0.12.3
+xgboost>=3.0.0
+lightgbm>=4.0.0
+optuna>=4.0.0
+optuna-integration>=4.0.0
+
+# Deep Learning 
+torch==2.5.1+cu121
+torchvision==0.20.1+cu121
+torchaudio==2.5.1+cu121
 
 # High-Performance Computing
 numba>=0.60.0  # JIT compiler

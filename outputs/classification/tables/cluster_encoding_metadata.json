@@ -1,0 +1,21 @@
+{
+  "n_clusters": 6,
+  "categorical_dtype": true,
+  "onehot_features": [
+    "Cluster_0",
+    "Cluster_1",
+    "Cluster_2",
+    "Cluster_3",
+    "Cluster_5"
+  ],
+  "risk_index_range": [
+    2.62,
+    38.54
+  ],
+  "recommended_xgb_params": {
+    "enable_categorical": true
+  },
+  "recommended_lgb_params": {
+    "categorical_feature": "auto"
+  }
+}
