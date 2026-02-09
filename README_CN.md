@@ -70,8 +70,8 @@
 
 ### 🎨 丰富的可视化
 
-- **19个分类模型图表**：ROC/PR曲线、校准曲线、混淆矩阵、SHAP依赖图等
-- **11个聚类分析图表**：UMAP/t-SNE降维、雷达图、热力图、决策树代理模型
+- **18个分类模型图表**：ROC/PR曲线、校准曲线、混淆矩阵、SHAP依赖图等
+- **10个聚类分析图表**：UMAP/t-SNE降维、雷达图、热力图、决策树代理模型
 - **交互式HTML报告**：完整的EDA、聚类和分类建模分析报告
 
 ---
@@ -134,14 +134,14 @@
 ### 数据处理流程
 
 ```
-原始数据(253,680条) → 逻辑一致性清洗(229,365条) 
+原始数据(253,680条) → 逻辑一致性清洗(253,264条) 
   → Profile去重聚合(229,296条唯一配置) 
   → 二值化目标(Diabetes_binary) → 特征工程(24基线特征) 
   → 聚类增强(+Risk_Index/Cluster_ID，共26特征)
 ```
 
 **说明**: 
-1. **逻辑清洗**: 移除416条矛盾记录（如`CholCheck=0 & HighChol=1`），253,680→229,365
+1. **逻辑清洗**: 移除416条矛盾记录（如`CholCheck=0 & HighChol=1`），253,680→253,264365
 2. **Profile去重**: 基于21特征+目标的唯一组合，聚合229,365条为229,296条配置（合并69条具有相同特征但权重不同的记录）
 3. **权重保持**: 每条记录的`Sample_Weight`保留原始频次，加权总和=253,264
 
@@ -176,7 +176,7 @@ DiaMetric-CDC/
 │
 ├── outputs/                                  # 输出结果目录
 │   ├── classification/                       
-│   │   ├── images/                           # 19张分类建模图表
+│   │   ├── images/                           # 18张分类建模图表
 │   │   ├── models/                           
 │   │   │   ├── champion_model_calibrated.pkl # 校准后最优模型（推荐）
 │   │   │   ├── champion_model_uncalibrated.pkl # 未校准模型
@@ -191,7 +191,7 @@ DiaMetric-CDC/
 │   │   └── logs/                             # 训练日志
 │   │
 │   ├── clustering_k-prototypes/              
-│   │   ├── images/                           # 11张聚类分析图表
+│   │   ├── images/                           # 10张聚类分析图表
 │   │   ├── models/                           
 │   │   │   └── optimal_gamma.json           # 最优Gamma参数
 │   │   ├── tables/                           
@@ -294,31 +294,55 @@ patch_sklearn()  # 自动加速scikit-learn算法
 ```python
 # 推荐方式：使用封装好的推理类
 import sys
-sys.path.append('outputs/classification/models')
+from pathlib import Path
+
+# Get the directory where the current script is located
+script_dir = Path(__file__).parent
+model_dir = script_dir / "outputs" / "classification" / "models"
+
+sys.path.append(str(model_dir))
 from inference_pipeline import DiabetesRiskPredictorAtomic
 
-# 初始化预测器
-predictor = DiabetesRiskPredictorAtomic(model_dir='outputs/classification/models')
+# Initialize the predictor
+predictor = DiabetesRiskPredictorAtomic(model_dir=str(model_dir))
 
-# 单个患者预测
+# Sample patient data
 sample_patient = {
-    'HighBP': 1, 'HighChol': 1, 'BMI': 32.5, 'Smoker': 0,
-    'PhysActivity': 1, 'GenHlth': 3, 'Age': 9,  # 45-49岁
-    'Income': 4, 'Sex': 1,  # 其他特征...
-    'Cluster_ID': 3,  # 来自Phase 4聚类结果
-    'Risk_Index': 32.94
+    "HighBP": 1,
+    "HighChol": 1,
+    "Stroke": 0,
+    "HeartDiseaseorAttack": 0,
+    "PhysActivity": 1,
+    "Fruits": 1,
+    "Veggies": 1,
+    "HvyAlcoholConsump": 0,
+    "NoDocbcCost": 0,
+    "GenHlth": 3,
+    "DiffWalk": 0,
+    "Sex": 1,
+    "Education": 5,
+    "Income": 4,
+    "MentHlth_Cat": 0,
+    "PhysHlth_Cat": 1,
+    "Age_BMI_Interaction": 280.5,
+    "CVD_Risk": 2,
+    "MetSyn_Risk": 3,
+    "Chronic_Count": 2,
+    "Lifestyle_Score": 3,
+    "Risk_Behavior": 0,
+    "BMI_Squared": 1056.25,
+    "Health_Imbalance": 5,
+    "Cluster_ID": 3,
+    "Risk_Index": 32.94,
 }
 
-result = predictor.predict_single(sample_patient)
-print(f"糖尿病风险概率: {result['probability']:.2%}")
-print(f"风险等级: {result['risk_level']}")
-print(f"二分类预测（阈值={result['threshold_used']:.3f}）: {'阳性' if result['prediction'] else '阴性'}")
-
-# 批量预测
-import pandas as pd
-test_df = pd.read_csv('data/processed/clustering_k-prototypes/CDC_Test_Classification_CLUSTERED.csv')
-results = predictor.predict_batch(test_df)
-print(results[['Risk_Probability', 'Risk_Level']].head())
+# Prediction
+result = predictor.predict_risk(sample_patient)
+print(f"Diabetes risk probability: {result['diabetes_risk']}")
+print(f"Risk tier: {result['risk_tier']}")
+print(
+    f"Binary classification prediction (threshold={result['threshold_used']:.3f}): {'Positive' if result['prediction'] else 'Negative'}"
+)
 ```
 
 **注意**: 推理脚本已处理校准模型的兼容性问题，无需手动加载joblib文件。
@@ -337,7 +361,7 @@ print(results[['Risk_Probability', 'Risk_Level']].head())
 - 特征-目标关联分析（Cramér's V、LOWESS平滑）
 - BMI非线性风险升级验证（WHO临床分桶）
 - 社会经济梯度评估（收入、教育与患病率）
-- PCA结构评估（21个特征 → 15维保留90%方差）
+- PCA结构评估（21个特征）
 - 多重共线性检测（VIF分析）
 
 **关键发现**:
@@ -400,12 +424,12 @@ print(results[['Risk_Probability', 'Risk_Level']].head())
 **Notebook**: [04_Clustering_K-Prototypes.ipynb](04_Clustering_K-Prototypes.ipynb)
 
 **核心内容**:
-- **ReliefF特征选择**: 从21个特征中提取10个判别性特征（5连续+5分类）
+- **ReliefF特征选择**: 从21个特征中提取6个判别性特征（4连续+2分类）
 - **Gamma参数校准**: 平衡连续和分类距离的权重（γ=4.274，自适应优化）
 - **最优K值确定**: 三阶段层次策略
   1. 粗筛: K=2-10，评估聚类质量指标
-  2. 细调: 45%小批量数据精细评估（K=5/6/7）
-  3. 最终: **K=6**（Silhouette=0.313，Davies-Bouldin Index=2912）
+  2. 细调: 45%小批量数据精细评估（K=2/3/6）
+  3. 最终: **K=6**（Silhouette=0.313，Calinski_Harabasz=2912）
 - **消融对比**: 
   - K-Means（仅连续）vs K-Modes（仅分类）vs K-Prototypes（混合）
   - 混合模型Silhouette Score优势: +14.3%
@@ -415,18 +439,18 @@ print(results[['Risk_Probability', 'Risk_Level']].head())
 - **可解释性分析**: 
   - UMAP/t-SNE降维可视化
   - 雷达图展示6种风险表型
-  - 全局代理决策树（深度=4，准确率86%）
+  - 全局代理决策树（深度=3，准确率81.23%）
 
 **聚类画像**:
 
-| Cluster | 规模 | 患病率 | 风险指数 | 风险分层 | 典型特征 |
+| Cluster | 规模 | 患病率 | 相对风险指数 | 风险分层 | 典型特征 |
 |---------|------|--------|----------|----------|----------|
-| **Cluster 4** | 36.3% (66,529) | 3.4% | 2.62 | 低风险 | 年轻、正常BMI、无慢病 |
-| **Cluster 2** | 5.1% (9,438) | 5.8% | 4.98 | 中等（行为） | 重度饮酒、低体重 |
-| **Cluster 0** | 24.9% (45,629) | 17.9% | 15.68 | 高风险 | 久坐、中年、超重 |
-| **Cluster 5** | 17.9% (32,799) | 20.9% | 18.04 | 高风险 | 代谢综合征前期 |
-| **Cluster 3** | 8.5% (15,507) | 35.6% | 32.94 | 极高风险 | 心血管共病、高龄 |
-| **Cluster 1** | 7.5% (13,704) | 40.9% | 38.54 | 极高风险 | 多重慢病、肥胖 |
+| **Cluster 4** | 36.3% | 3.4% | 2.62 | 低风险 | 年轻、正常BMI、无慢病 |
+| **Cluster 2** | 5.1% | 5.8% | 4.98 | 中等（行为） | 重度饮酒、低体重 |
+| **Cluster 0** | 24.9% | 17.9% | 15.68 | 高风险 | 久坐、中年、超重 |
+| **Cluster 5** | 17.9% | 20.9% | 18.04 | 高风险 | 代谢综合征前期 |
+| **Cluster 3** | 8.5% | 35.6% | 32.94 | 极高风险 | 心血管共病、高龄 |
+| **Cluster 1** | 7.5% | 40.9% | 38.54 | 极高风险 | 多重慢病、肥胖 |
 
 ![聚类雷达图](outputs/clustering_k-prototypes/images/cluster_radar_profiles.png)
 *图1: 六类风险表型的多维特征雷达图*
@@ -440,6 +464,11 @@ print(results[['Risk_Probability', 'Risk_Level']].head())
 **输出数据集**:
 - `CDC_Train/T[05_Classification_Modeling.ipynb](05_Classification_Modeling.ipynb)
 - `CDC_Test/T[05_Classification_Modeling.ipynb](05_Classification_Modeling.ipynb)
+
+### Phase 5: Classification 分类模型
+
+**Notebook**: [05_Classification_Modeling.ipynb](05_Classification_Modeling.ipynb)
+
 **核心内容**:
 - **类别不平衡处理**:
   - 成本敏感学习: `scale_pos_weight=7.184` (FN成本:FP成本=5:1)
@@ -451,7 +480,7 @@ print(results[['Risk_Probability', 'Risk_Level']].head())
 - **多模型Benchmark**:
   - 6种算法: Logistic Regression, Decision Tree, Random Forest, XGBoost, KNN, LightGBM
   - **冠军模型**: XGBoost Optimized（GPU hist加速）
-  - 最佳性能: AUC-ROC **0.8193**, PR-AUC **0.4481**, Clinical Score **0.6296**
+  - 最佳性能: AUC-ROC **0.8193**, PR-AUC **0.4481**, Clinical Score **0.6296**,Recall **0.8508**
 - **超参数优化**:
   - 框架: OPTUNA（贝叶斯TPE采样器）
   - 优化目标: PR-AUC（更适合不平衡数据）
@@ -621,7 +650,7 @@ print(results[['Risk_Probability', 'Risk_Level']].head())
 
 | 指标 | Cluster 1 | Cluster 3 |
 |------|-----------|-----------|
-| **规模** | 7.5% (13,704人) | 8.5% (15,507人) |
+| **规模** | 7.5% | 8.5% |
 | **患病率** | 40.9% | 35.6% |
 | **风险指数** | 38.54 | 32.94 |
 | **核心特征** | 多重慢病+肥胖 | 心血管共病+高龄 |
@@ -650,8 +679,8 @@ print(results[['Risk_Probability', 'Risk_Level']].head())
 
 | 指标 | Cluster 0 | Cluster 5 |
 |------|-----------|-----------|
-| **规模** | 24.9% (45,629人) | 17.9% (32,799人) |
-| **患病率** | 17.9% | 20.9% |
+| **规模** | 26.8% | 18.6% |
+| **患病率** | 17.9% | 21.0% |
 | **风险指数** | 15.68 | 18.04 |
 | **核心特征** | 久坐+超重 | 代谢综合征前期 |
 
@@ -682,7 +711,7 @@ print(results[['Risk_Probability', 'Risk_Level']].head())
 
 #### 🟡 三级监测：中等风险群体（Cluster 2）
 
-**规模**: 5.1% (9,438人) | **患病率**: 5.8% | **风险指数**: 4.98
+**规模**: 5.5% | **患病率**: 5.8% | **风险指数**: 4.98
 
 **临床画像**: 
 - 重度饮酒100%（定义：男性≥14杯/周，女性≥7杯/周）
@@ -709,7 +738,7 @@ print(results[['Risk_Probability', 'Risk_Level']].head())
 
 #### 🟢 四级维护：低风险群体（Cluster 4）
 
-**规模**: 36.3% (66,529人) | **患病率**: 3.4% | **风险指数**: 2.62
+**规模**: 31.5% | **患病率**: 3.4% | **风险指数**: 2.62
 
 **临床画像**:
 - 平均年龄38岁，BMI 24.6（正常范围）
@@ -771,7 +800,7 @@ print(results[['Risk_Probability', 'Risk_Level']].head())
 ### 4. 严格的统计验证
 
 - **Bootstrap CI**: 1000次重采样估计性能区间
-- **配对t检验**: 消融实验统计显著性（p<0.05）
+- **配对t检验**: 消融实验统计显著性
 - **分层交叉验证**: 5-fold CV保持类别平衡
 - **稳定性审计**: 聚类ARI=0.83±0.02（高稳定性，通过500次Bootstrap重采样验证）
 
@@ -802,7 +831,7 @@ print(results[['Risk_Probability', 'Risk_Level']].head())
 - **问题**: BRFSS 2015为截面调查，无法建立**因果关系**
 - **影响**: 例如"HighBP→糖尿病"可能是双向关联或共同原因（如肥胖）
 - **缓解策略**: 
-  - 未来应整合2016-2023年纵向数据，进行生存分析 (Cox回归)
+  - 未来应整合2016-2026年纵向数据，进行生存分析 (Cox回归)
   - 使用工具变量法 (Instrumental Variables) 评估干预效果
 
 #### 自报偏差 (Self-Report Bias)
@@ -880,7 +909,7 @@ print(results[['Risk_Probability', 'Risk_Level']].head())
 
 #### 时间漂移 (Temporal Drift)
 - **问题**: 2015年数据可能无法适用于2026年人群 (生活方式变化/医疗技术进步)
-- **验证**: 未在2016-2023年BRFSS数据上测试模型性能
+- **验证**: 未在2016-2026年BRFSS数据上测试模型性能
 - **建议**: 部署后实时监控性能退化，每年使用新数据重训
 
 #### 人群差异 (Population Shift)
@@ -930,7 +959,7 @@ print(results[['Risk_Probability', 'Risk_Level']].head())
 
 ### 短期改进
 
-- [ ] **时序扩展**: 整合2016-2023年BRFSS数据追踪趋势变化
+- [ ] **时序扩展**: 整合2016-2026年BRFSS数据追踪趋势变化
 - [ ] **增量学习**: 实现在线学习框架适应新数据
 - [ ] **特征增强**: 纳入遗传风险评分（GRS）和饮食质量指数
 - [ ] **模型集成**: Stacking融合XGBoost/LightGBM/CatBoost

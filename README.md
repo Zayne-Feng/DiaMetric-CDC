@@ -70,8 +70,8 @@ English | [简体中文](README_CN.md)
 
 ### 🎨 Rich Visualizations
 
-- **19 Classification Charts**: ROC/PR curves, calibration curves, confusion matrices, SHAP dependence plots, etc.
-- **11 Clustering Charts**: UMAP/t-SNE dimensionality reduction, radar charts, heatmaps, surrogate decision trees
+- **18 Classification Charts**: ROC/PR curves, calibration curves, confusion matrices, SHAP dependence plots, etc.
+- **10 Clustering Charts**: UMAP/t-SNE dimensionality reduction, radar charts, heatmaps, surrogate decision trees
 - **Interactive HTML Reports**: Complete EDA, clustering, and classification modeling analysis reports
 
 ---
@@ -175,7 +175,7 @@ DiaMetric-CDC/
 │
 ├── outputs/                                  # Output Directory
 │   ├── classification/                       
-│   │   ├── images/                           # 19 Classification Charts
+│   │   ├── images/                           # 18 Classification Charts
 │   │   ├── models/                           
 │   │   │   ├── champion_model_calibrated.pkl # Calibrated champion (recommended)
 │   │   │   ├── champion_model_uncalibrated.pkl # Uncalibrated model
@@ -190,7 +190,7 @@ DiaMetric-CDC/
 │   │   └── logs/                             # Training Logs
 │   │
 │   ├── clustering_k-prototypes/              
-│   │   ├── images/                           # 11 Clustering Charts
+│   │   ├── images/                           # 10 Clustering Charts
 │   │   ├── models/                           
 │   │   │   └── optimal_gamma.json           # Optimal Gamma Parameter
 │   │   ├── tables/                           
@@ -291,33 +291,57 @@ patch_sklearn()  # Auto-accelerate scikit-learn algorithms
 ### Option 2: Production-Grade Inference Script
 
 ```python
-# Recommended: Use wrapped inference class
 import sys
-sys.path.append('outputs/classification/models')
+from pathlib import Path
+
+# Get the directory where the current script is located
+script_dir = Path(__file__).parent
+model_dir = script_dir / "outputs" / "classification" / "models"
+
+sys.path.append(str(model_dir))
 from inference_pipeline import DiabetesRiskPredictorAtomic
 
-# Initialize predictor
-predictor = DiabetesRiskPredictorAtomic(model_dir='outputs/classification/models')
+# Initialize the predictor
+predictor = DiabetesRiskPredictorAtomic(model_dir=str(model_dir))
 
-# Single patient prediction
+# Sample patient data
 sample_patient = {
-    'HighBP': 1, 'HighChol': 1, 'BMI': 32.5, 'Smoker': 0,
-    'PhysActivity': 1, 'GenHlth': 3, 'Age': 9,  # 45-49 years
-    'Income': 4, 'Sex': 1,  # Other features...
-    'Cluster_ID': 3,  # From Phase 4 clustering
-    'Risk_Index': 32.94
+    "HighBP": 1,
+    "HighChol": 1,
+    "Stroke": 0,
+    "HeartDiseaseorAttack": 0,
+    "PhysActivity": 1,
+    "Fruits": 1,
+    "Veggies": 1,
+    "HvyAlcoholConsump": 0,
+    "NoDocbcCost": 0,
+    "GenHlth": 3,
+    "DiffWalk": 0,
+    "Sex": 1,
+    "Education": 5,
+    "Income": 4,
+    "MentHlth_Cat": 0,
+    "PhysHlth_Cat": 1,
+    "Age_BMI_Interaction": 280.5,
+    "CVD_Risk": 2,
+    "MetSyn_Risk": 3,
+    "Chronic_Count": 2,
+    "Lifestyle_Score": 3,
+    "Risk_Behavior": 0,
+    "BMI_Squared": 1056.25,
+    "Health_Imbalance": 5,
+    "Cluster_ID": 3,
+    "Risk_Index": 32.94,
 }
 
-result = predictor.predict_single(sample_patient)
-print(f"Diabetes Risk: {result['probability']:.2%}")
-print(f"Risk Level: {result['risk_level']}")
-print(f"Binary Prediction (threshold={result['threshold_used']:.3f}): {'Positive' if result['prediction'] else 'Negative'}")
+# Prediction
+result = predictor.predict_risk(sample_patient)
+print(f"Diabetes risk probability: {result['diabetes_risk']}")
+print(f"Risk tier: {result['risk_tier']}")
+print(
+    f"Binary classification prediction (threshold={result['threshold_used']:.3f}): {'Positive' if result['prediction'] else 'Negative'}"
+)
 
-# Batch prediction
-import pandas as pd
-test_df = pd.read_csv('data/processed/clustering_k-prototypes/CDC_Test_Classification_CLUSTERED.csv')
-results = predictor.predict_batch(test_df)
-print(results[['Risk_Probability', 'Risk_Level']].head())
 ```
 
 **Note**: Inference script handles calibrated model compatibility issues automatically, no manual joblib loading needed.
@@ -336,7 +360,7 @@ print(results[['Risk_Probability', 'Risk_Level']].head())
 - Feature-target association analysis (Cramér's V, LOWESS smoothing)
 - BMI non-linear risk escalation validation (WHO clinical binning)
 - Socioeconomic gradient assessment (income, education vs prevalence)
-- PCA structure evaluation (21 features → 15 dimensions retain 90% variance)
+- PCA structure evaluation (21 features)
 - Multicollinearity detection (VIF analysis)
 
 **Key Findings**:
@@ -360,7 +384,7 @@ print(results[['Risk_Probability', 'Risk_Level']].head())
 
 **Output Dataset**:
 - `CDC_Diabetes_Cleaned.csv`: 229,296 rows × 23 columns
-- Weight sum validation: 253,680 (consistent with original record count)
+- Weight sum validation: 253,264
 
 ---
 
@@ -397,12 +421,12 @@ print(results[['Risk_Probability', 'Risk_Level']].head())
 **Notebook**: [04_Clustering_K-Prototypes.ipynb](04_Clustering_K-Prototypes.ipynb)
 
 **Core Content**:
-- **ReliefF Feature Selection**: Extract 10 discriminative features from 21 (5 continuous + 5 categorical)
+- **ReliefF Feature Selection**: Extract 6 discriminative features from 21 (4 continuous + 2 categorical)
 - **Gamma Parameter Calibration**: Balance continuous and categorical distance weights (γ=4.274, adaptive optimization)
 - **Optimal K Determination**: Three-stage hierarchical strategy
   1. Broad screening: K=2-10, evaluate clustering quality metrics
-  2. Fine-tuning: 45% mini-batch evaluation (K=5/6/7)
-  3. Final: **K=6** (Silhouette=0.313, Davies-Bouldin Index=2912)
+  2. Fine-tuning: 45% mini-batch evaluation (K=2/3/6)
+  3. Final: **K=6** (Silhouette=0.313, Calinski_Harabasz=2912)
 - **Ablation Comparison**: 
   - K-Means (continuous-only) vs K-Modes (categorical-only) vs K-Prototypes (mixed)
   - Mixed model Silhouette Score advantage: +14.3%
@@ -416,14 +440,14 @@ print(results[['Risk_Probability', 'Risk_Level']].head())
 
 **Cluster Profiles**:
 
-| Cluster | Size | Prevalence | Risk Index | Risk Tier | Typical Characteristics |
+| Cluster | Size | Prevalence | Relative Risk Index | Risk Tier | Typical Characteristics |
 |---------|------|------------|------------|-----------|------------------------|
-| **Cluster 4** | 36.3% (66,529) | 3.4% | 2.62 | Low | Young, normal BMI, no chronic conditions |
-| **Cluster 2** | 5.1% (9,438) | 5.8% | 4.98 | Moderate (Behavioral) | Heavy alcohol, underweight |
-| **Cluster 0** | 24.9% (45,629) | 17.9% | 15.68 | High | Sedentary, middle-aged, overweight |
-| **Cluster 5** | 17.9% (32,799) | 20.9% | 18.04 | High | Pre-metabolic syndrome |
-| **Cluster 3** | 8.5% (15,507) | 35.6% | 32.94 | Very High | Cardiovascular comorbidity, elderly |
-| **Cluster 1** | 7.5% (13,704) | 40.9% | 38.54 | Very High | Multiple chronic diseases, obese |
+| **Cluster 4** | 36.3% | 3.4% | 2.62 | Low | Young, normal BMI, no chronic conditions |
+| **Cluster 2** | 5.1%  | 5.8% | 4.98 | Moderate (Behavioral) | Heavy alcohol, underweight |
+| **Cluster 0** | 24.9% | 17.9% | 15.68 | High | Sedentary, middle-aged, overweight |
+| **Cluster 5** | 17.9% | 20.9% | 18.04 | High | Pre-metabolic syndrome |
+| **Cluster 3** | 8.5% | 35.6% | 32.94 | Very High | Cardiovascular comorbidity, elderly |
+| **Cluster 1** | 7.5% | 40.9% | 38.54 | Very High | Multiple chronic diseases, obese |
 
 ![Cluster Radar Profiles](outputs/clustering_k-prototypes/images/cluster_radar_profiles.png)
 *Figure 1: Multi-dimensional feature radar chart for six risk phenotypes*
@@ -454,7 +478,8 @@ print(results[['Risk_Probability', 'Risk_Level']].head())
 - **Multi-Model Benchmark**:
   - 6 algorithms: Logistic Regression, Decision Tree, Random Forest, XGBoost, KNN, LightGBM
   - **Champion Model**: XGBoost Optimized (GPU hist acceleration)
-  - Best performance: AUC-ROC **0.8193**, PR-AUC **0.4481**, Clinical Score **0.6296**
+  - Best performance: AUC-ROC **0.8193**, PR-AUC **0.4481**, Clinical Score **0.6296**，Recall **0.8508**
+
 - **Hyperparameter Optimization**:
   - Framework: OPTUNA (Bayesian TPE sampler)
   - Optimization objective: PR-AUC (more suitable for imbalanced data)
@@ -570,15 +595,15 @@ print(results[['Risk_Probability', 'Risk_Level']].head())
 
 ### SHAP Dependence Plot Insights
 
-- **Age_BMI_Interaction**: 
+- **Age_BMI_Interaction**(SHAP=0.415): 
   - High values (elderly + obese) significantly increase risk
   - GenHlth as interaction term further amplifies effect
   
-- **GenHlth**: 
+- **GenHlth**(SHAP=0.353): 
   - Rating≥4 (poor health) is strongest risk signal
   - Positive correlation interaction with chronic disease count
   
-- **Risk_Index**: 
+- **Risk_Index**(SHAP=0.330): 
   - Steep risk increase in 30-40 range
   - Validates effectiveness of clustering risk stratification
 
@@ -617,8 +642,8 @@ Risk stratification management plan based on clustering results:
 
 #### 🔴 Very High Risk Groups (Cluster 1 & 3)
 
-**Size**: 15.9% (29,210 individuals)  
-**Prevalence**: 38-41%  
+**Size**: 8.2% + 9.4% 
+**Prevalence**: 36 - 41%  
 **Intervention Strategy**: 
 - Quarterly metabolic marker monitoring (HbA1c, lipids, BP)
 - Integrated cardiovascular-metabolic care (heart-kidney protection)
@@ -627,8 +652,8 @@ Risk stratification management plan based on clustering results:
 
 #### 🟠 High Risk Groups (Cluster 0 & 5)
 
-**Size**: 42.8% (78,428 individuals)  
-**Prevalence**: 18-21%  
+**Size**: 26.8% + 18.6%
+**Prevalence**: 18 - 21%  
 **Intervention Strategy**: 
 - Structured physical activity prescriptions (150 min/week moderate intensity)
 - Medical nutrition therapy (MNT): Caloric density education
@@ -637,7 +662,7 @@ Risk stratification management plan based on clustering results:
 
 #### 🟡 Moderate Risk Group (Cluster 2)
 
-**Size**: 5.1% (9,438 individuals)  
+**Size**: 5.5% 
 **Prevalence**: 5.8%  
 **Characteristics**: Heavy alcohol consumption  
 **Intervention Strategy**: 
@@ -647,7 +672,7 @@ Risk stratification management plan based on clustering results:
 
 #### 🟢 Low Risk Group (Cluster 4)
 
-**Size**: 36.2% (66,529 individuals)  
+**Size**: 31.5%
 **Prevalence**: 3.4%  
 **Intervention Strategy**: 
 - Annual wellness screenings and biometric tracking
@@ -691,7 +716,7 @@ Maintenance Level (Low)    → Cluster 4 (Preventive education)
 ### 4. Rigorous Statistical Validation
 
 - **Bootstrap CI**: 1000 resamples estimate performance intervals
-- **Paired t-test**: Ablation study statistical significance (p<0.05)
+- **Paired t-test**: Ablation study statistical significance
 - **Stratified Cross-Validation**: 5-fold CV maintains class balance
 - **Stability Audit**: Clustering ARI=0.83±0.02 (high stability, validated via 500 Bootstrap resamples)
 
@@ -722,7 +747,7 @@ Maintenance Level (Low)    → Cluster 4 (Preventive education)
 - **Issue**: BRFSS 2015 is a cross-sectional survey, cannot establish **causality**
 - **Impact**: E.g., "HighBP→Diabetes" may be bidirectional or confounded (obesity)
 - **Mitigation**: 
-  - Integrate 2016-2023 longitudinal data for survival analysis (Cox regression)
+  - Integrate 2016-2026 longitudinal data for survival analysis (Cox regression)
   - Use instrumental variables to assess intervention effects
 
 #### Self-Report Bias
@@ -800,7 +825,7 @@ Maintenance Level (Low)    → Cluster 4 (Preventive education)
 
 #### Temporal Drift
 - **Issue**: 2015 data may not apply to 2026 population (lifestyle changes/medical advances)
-- **Validation Gap**: Not tested on 2016-2023 BRFSS data
+- **Validation Gap**: Not tested on 2016-2026 BRFSS data
 - **Recommendation**: Post-deployment, monitor performance degradation in real-time, retrain annually with new data
 
 #### Population Shift
@@ -850,7 +875,7 @@ Maintenance Level (Low)    → Cluster 4 (Preventive education)
 
 ### Short-term Improvements
 
-- [ ] **Temporal Extension**: Integrate 2016-2023 BRFSS data to track trend changes
+- [ ] **Temporal Extension**: Integrate 2016-2026 BRFSS data to track trend changes
 - [ ] **Incremental Learning**: Implement online learning framework to adapt to new data
 - [ ] **Feature Enhancement**: Incorporate genetic risk score (GRS) and dietary quality index
 - [ ] **Model Ensemble**: Stacking fusion of XGBoost/LightGBM/CatBoost
